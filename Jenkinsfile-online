@@ -93,7 +93,7 @@ pipeline {
           }
           steps {
               container ('maven') {
-                echo $GITHUB_TOKEN
+                
                 input(id: 'release-image-with-tag', message: 'release image with tag?')
                   withCredentials([usernamePassword(credentialsId: "$GITHUB_CREDENTIAL_ID", passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
                     sh 'git config --global user.email "kubesphere@yunify.com" '
@@ -101,6 +101,7 @@ pipeline {
                     sh 'git tag -a $TAG_NAME -m "$TAG_NAME" '
                   }
                   withCredentials([string(credentialsId: "$GITHUB_TOKEN_ID", variable: 'GITHUB_TOKEN')]){
+                    echo $GITHUB_TOKEN
                     sh 'git push https://$GITHUB_TOKEN@github.com/$GITHUB_ACCOUNT/devops-java-sample.git --tags --ipv4'
                   }
                 sh 'docker tag  $REGISTRY/$DOCKERHUB_NAMESPACE/$APP_NAME:SNAPSHOT-$BRANCH_NAME-$BUILD_NUMBER $REGISTRY/$DOCKERHUB_NAMESPACE/$APP_NAME:$TAG_NAME '
